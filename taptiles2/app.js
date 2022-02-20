@@ -9,15 +9,11 @@ var randomIndex=0;
 var score=0;
 var gameOn=false;
 var gameOver=false;
-//Digit1-9
-//wakelock = navigator.requestWakeLock('screen');
-//wakelock.unlock();
 
 document.addEventListener('keydown', logKey);
 
 
 function logKey(e) {
-
     console.log(e.code);
     if(e.code.startsWith("Digit")){
         if(gameOn){
@@ -33,9 +29,7 @@ function logKey(e) {
             console.log("Game is not on or over");
             setGameOn();
         }
-
     }
-
 }
 function checkButtonPress(){
     var pressedCount=pressedButtons.length;
@@ -45,20 +39,13 @@ function checkButtonPress(){
         scoreText.innerText=score.toString();
     }
     else{
-        //clearInterval(interval);
-        //var inputText=document.getElementById("inputText");
-        //inputText.innerText="Fail! Score: "+score.toString();
-        //if(!gameOver){
-            gameOverScreen();
-            console.log(pressedButtons);
-            console.log(pressSequence);
-       // }
+        gameOverScreen();
+        console.log(pressedButtons);
+        console.log(pressSequence);
     }
 }
 
-
 function setStartSCreen(){
-
 }
 
 function myFunction() {
@@ -80,6 +67,7 @@ function myFunction() {
 function setColorBack(buttontest){
     buttontest.style.backgroundColor="blue";
 }
+
 function setButtons() {
     for(var i=1;i<=9;i++){
         var tile={
@@ -89,13 +77,14 @@ function setButtons() {
         tiles.push(tile);
     }
 }
+
 function playerPress(value){
-    //Turha
+    //For testing purposes only
     console.log(value);
 }
+
 function setGameOn(){
     gameOn=true;
-
     var gameScreen = document.getElementById("gameScreen");  
     gameScreen.style.display="block";
     var startScreen = document.getElementById("startScreen");  
@@ -106,6 +95,7 @@ function setGameOn(){
     setButtons();
     myFunction();
 }
+
 function gameOverScreen(){
     gameOver=true;
     gameOn=false;
@@ -124,6 +114,7 @@ function gameOverScreen(){
     var text = document.getElementById("finalScoreText");   
     text.innerText="Your score: "+score;
 }
+
 function backToTitleScreen(){
     gameOver=false;
     gameOn=false;
@@ -132,4 +123,3 @@ function backToTitleScreen(){
     var startScreen = document.getElementById("startScreen");  
     startScreen.style.display="block";
 }
-//window.onload = myFunction();
