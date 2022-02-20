@@ -35,8 +35,8 @@ function checkButtonPress(){
     var pressedCount=pressedButtons.length;
     if(pressedButtons[pressedCount-1]==pressSequence[pressedCount-1]){
         score++;
-        var scoreText=document.getElementById("scoreText");
-        scoreText.innerText=score.toString();
+        // var scoreText=document.getElementById("scoreText");
+        // scoreText.innerText=score.toString();
     }
     else{
         gameOverScreen();
@@ -51,12 +51,14 @@ function setStartSCreen(){
 function myFunction() {
     function blinkButtonColors() {
         clearInterval(interval2);
-        randomIndex=(randomIndex+1) % 9;
+        randomIndex=Math.floor(Math.random()*8);
         pressSequence.push(randomIndex);
         for(var i=0; i< tiles.length;i++){
             if(tiles[i].id==randomIndex){
                 var button=document.getElementById(tiles[i].text);
-                button.style.backgroundColor="red";
+                // var scoreText=document.getElementById("scoreText");
+                // scoreText.innerText=tiles[i].text.toString();
+                button.src="images/button_RED.png";
                 interval2=setInterval(function() { setColorBack(button); },50);
             }
         }
@@ -64,8 +66,8 @@ function myFunction() {
     interval=setInterval(blinkButtonColors, 2000);
 }
 
-function setColorBack(buttontest){
-    buttontest.style.backgroundColor="blue";
+function setColorBack(button){
+    button.src="images/button_BLUE.png";
 }
 
 function setButtons() {
@@ -90,8 +92,6 @@ function setGameOn(){
     var startScreen = document.getElementById("startScreen");  
     startScreen.style.display="none";
     score=0;
-    var scoreText=document.getElementById("scoreText");
-    scoreText.innerText=score.toString();
     setButtons();
     myFunction();
 }
