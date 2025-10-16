@@ -3,63 +3,61 @@
     <head>
         <meta charset="UTF-8">
         <title>test</title>
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="styles.css" type="text/css" />
         <script src="app.js"></script>
     </head>
-
     <body>
-      <div id="startScreen"  style="display: block;">
+      <div id="startScreen">
+        <img class="test" src="images/button_BLUE.png"/>
         <div>
-          <h1>Tap Tiles 2</h1>
-          <h2>The Tappening</h2>
-        </div>
-        <div>
-          <h3>
-            (Press 1 to start...)
-          </h3>
-        </div>
-      </div>
-      <div id="gameScreen" style="display: none;">
-        <div id="gameButtons">
-          <div class="row">
-              <div class="column" onclick="playerPress('1')">
-                <img  id="button1" src="images/button_BLUE.png" style="width:100%"> 
-              </div>
-              <div class="column" onclick="playerPress('2')">
-                <img id="button2" src="images/button_BLUE.png" style="width:100%">
-              </div>
-              <div class="column"  onclick="playerPress('3')">
-                <img id="button3" src="images/button_BLUE.png" style="width:100%">
-              </div>
+          <div class="caption eitbittext">TapTiles 2</div>
+          <div class="subTitle eitbittext">The Tappening</div>
+          <div class="buttonDiv">
+            <div class="subTitle">
+              <h3>
+                </h3>
             </div>
-            <div class="row">
-              <div class="column"  onclick="playerPress('4')">
-                <img id="button4" src="images/button_BLUE.png" style="width:100%">
-              </div>
-              <div class="column"  onclick="playerPress('5')">
-                <img id="button5" src="images/button_BLUE.png" style="width:100%">
-              </div>
-              <div class="column"  onclick="playerPress('6')">
-                <img id="button6" src="images/button_BLUE.png" style="width:100%">
-              </div>
-            </div>
-            <div class="row">
-              <div class="column"  onclick="playerPress('7')">
-                <img id="button7" src="images/button_BLUE.png" style="width:100%">
-              </div>
-              <div class="column"  onclick="playerPress('8')">
-                <img id="button8" src="images/button_BLUE.png" style="width:100%">
-              </div>
-              <div class="column"  onclick="playerPress('9')">
-                <img id="button9" src="images/button_BLUE.png" style="width:100%">
-              </div>
-            </div>
-            <!-- <b id="scoreText">Score:
-              <div id="scoreText">
-              </div>
-            </b> -->
           </div>
+        </div>
       </div>
+      <div id="gameScreen" class="grid-container"  style="display: none;">
+        <table>
+          <tr>
+            <td onclick="playerPress('1')">
+              <img id="button1" src="images/drawing.svg">
+            </td>
+            <td onclick="playerPress('2')">
+              <img id="button2" src="images/button_BLUE.png">
+            </td>
+            <td onclick="playerPress('3')">
+              <img id="button3" src="images/button_BLUE.png">
+            </td>
+          </tr>
+          <tr>
+            <td onclick="playerPress('4')">
+              <img id="button4" src="images/button_BLUE.png">
+            </td>
+            <td onclick="playerPress('5')">
+              <img    id="button5" src="images/button_BLUE.png">
+            </td>
+            <td onclick="playerPress('6')">
+              <img    id="button6" src="images/button_BLUE.png">
+            </td>
+          </tr>
+          <tr>
+            <td onclick="playerPress('7')">
+              <img    id="button7" src="images/button_BLUE.png">
+            </td>
+            <td onclick="playerPress('8')">
+              <img    id="button8" src="images/button_BLUE.png">
+            </td>
+            <td onclick="playerPress('9')">
+              <img    id="button9" src="images/button_BLUE.png">
+            </td>
+          </tr>
+        </table>
+      </div>
+    
       <div id="gameOverScreen" style="display: none;">
         <h1>
           You lost!

@@ -1,15 +1,17 @@
-* {
-  box-sizing: border-box;
-}
-.column {
-  float: left;
-  width: 33.33%;
-  padding: 5px;
-}
+      /* Set the height of the body and html elements to 100% to ensure full height */
+      body, html {
+        height: 100%;
+      }
 
-/* Clearfix (clear floats) */
-.row::after {
-  content: "";
-  clear: both;
-  display: table;
-}
+      /* Set the width and height of the table to 100% to fill the entire screen */
+      table {
+        width: 100%;
+        height: 100%;
+        table-layout: fixed;
+      }
+
+      /* Set the width of each table cell to 33.33% to create a three by three table */
+      td {
+        width: 33.33%;
+        border: 1px solid black;
+      }
