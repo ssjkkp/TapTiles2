@@ -18,28 +18,45 @@ var end2;
 
 document.addEventListener('keydown', logKey);
 
+// Mapping for PC numpad layout
+const PC_KEYPAD_MAP = {
+  'Numpad7': 1, 'Numpad8': 2, 'Numpad9': 3,
+  'Numpad4': 4, 'Numpad5': 5, 'Numpad6': 6,
+  'Numpad1': 7, 'Numpad2': 8, 'Numpad3': 9
+};
+
+// Mapping for KaiOS 8110 keypad layout
+const KAIOS_KEYPAD_MAP = {
+  'Numpad1': 1, 'Numpad2': 2, 'Numpad3': 3,
+  'Numpad4': 4, 'Numpad5': 5, 'Numpad6': 6,
+  'Numpad7': 7, 'Numpad8': 8, 'Numpad9': 9
+};
+
+const KEYPAD_MAP = PC_KEYPAD_MAP;
+// const KEYPAD_MAP = KAIOS_KEYPAD_MAP;
 
 function logKey(e) {
     console.log(e.code);
     e.stopPropagation();
      //if(e.code.startsWith("Digit")){
-        if(e.code.startsWith("Numpad")){
-        if(gameOn){
-            //console.log("Game is on");
-            //pressedButtons.push(e.code.substr(5));
-            pressedButtons.push(e.code.substr(6));
-            console.log(e.code.substr(6));
-            checkButtonPress();
-        }
-        else if(gameOver){
-            console.log("Game is over");
-            backToTitleScreen()
-        }
-        else if(!gameOn && !gameOver){
-            console.log("Game is not on or over");
-            setGameOn();
-        }
-    }
+        //if(e.code.startsWith("Numpad")){
+            if(gameOn){
+                //console.log("Game is on");
+                const tilePressed = KEYPAD_MAP[e.code]
+                pressedButtons.push(tilePressed);
+                console.log("e.code.substr(6): " + e.code.substr(6));
+                console.log("tilePressed: " + tilePressed)
+                checkButtonPress();
+            }
+            else if(gameOver){
+                console.log("Game is over");
+                backToTitleScreen()
+            }
+            else if(!gameOn && !gameOver){
+                console.log("Game is not on or over");
+                setGameOn();
+            }
+    //}
 }
 function checkButtonPress(){
     var pressedCount=pressedButtons.length;
