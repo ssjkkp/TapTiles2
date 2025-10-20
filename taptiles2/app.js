@@ -33,6 +33,22 @@ document.addEventListener('keydown', handleKeyPress);
 function handleKeyPress(e) {
   e.stopPropagation();
 
+    // --- Handle softkeys for navigation ---
+    if (e.code === "SoftRight") {
+        // Only act if the game is running or game over
+        if (gameOn || gameOver) {
+            backToTitleScreen();
+            return;
+        }
+    }
+
+    if (e.code === "Escape") {
+        if (gameOn || gameOver) {
+            backToTitleScreen();
+            return;
+        }
+    }
+
   if (KEYPAD_MAP[e.code]) {
     const tilePressed = KEYPAD_MAP[e.code];
 
