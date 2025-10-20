@@ -1,24 +1,4 @@
-var timerOn=false;
-
-var tiles=[];
-var interval;
-var interval2;
-var pressedButtons=[];
-var pressSequence=[];
-var randomIndex=0;
-var score=0;
-var gameOn=false;
-var gameOver=false;
-var intervalLength=2000;
-var intervalSteps=30;
-var start;
-var end;
-var start2;
-var end2;
-
-document.addEventListener('keydown', logKey);
-
-// Mapping for PC numpad layout
+// Mapping for PC numpad layout (top: 7,8,9 → bottom: 1,2,3)
 const PC_KEYPAD_MAP = {
   'Numpad7': 1, 'Numpad8': 2, 'Numpad9': 3,
   'Numpad4': 4, 'Numpad5': 5, 'Numpad6': 6,
@@ -32,138 +12,127 @@ const KAIOS_KEYPAD_MAP = {
   'Numpad7': 7, 'Numpad8': 8, 'Numpad9': 9
 };
 
+// Choose which layout to test:
 const KEYPAD_MAP = PC_KEYPAD_MAP;
 // const KEYPAD_MAP = KAIOS_KEYPAD_MAP;
 
-function logKey(e) {
-    console.log(e.code);
-    e.stopPropagation();
-            if(gameOn){
-                const tilePressed = KEYPAD_MAP[e.code]
-                pressedButtons.push(tilePressed);
-                // console.log("e.code.substr(6): " + e.code.substr(6));
-                // console.log("tilePressed: " + tilePressed)
-                checkButtonPress();
-            }
-            else if(gameOver){
-                backToTitleScreen()
-            }
-            else if(!gameOn && !gameOver){
-                setGameOn();
-            }
-}
-function checkButtonPress(){
-    var pressedCount=pressedButtons.length;
-    if(pressedButtons[pressedCount-1]==pressSequence[pressedCount-1]){
-        score++;
+let tiles = [];
+let pressSequence = [];
+let pressedButtons = [];
+let interval, flashTimeout;
+let randomIndex = 0;
+let score = 0;
+let gameOn = false;
+let gameOver = false;
+let intervalLength = 2000;
+let intervalSteps = 30;
+
+// === INITIAL SETUP ===
+document.addEventListener('keydown', handleKeyPress);
+
+function handleKeyPress(e) {
+  e.stopPropagation();
+
+  if (KEYPAD_MAP[e.code]) {
+    const tilePressed = KEYPAD_MAP[e.code];
+
+    if (gameOn) {
+      pressedButtons.push(tilePressed);
+      checkButtonPress();
+    } else if (gameOver) {
+      backToTitleScreen();
+    } else {
+      setGameOn();
     }
-    else{
-        gameOverScreen();
-    }
+  }
 }
 
-function setStartSCreen(){
+// === GAME LOGIC ===
+function checkButtonPress() {
+  const pressedCount = pressedButtons.length;
+  if (pressedButtons[pressedCount - 1] === pressSequence[pressedCount - 1]) {
+    score++;
+  } else {
+    gameOverScreen();
+  }
 }
 
-function myFunction() {
-    function blinkButtonColors() {
-        end2 = new Date().getTime();
-        var time2 = end - start;
-        console.log('Execution time Interval1: ' + time2);
-        clearInterval(interval2);
+function flashRandomTile() {
+  randomIndex = Math.floor(Math.random() * 9) + 1;
+  pressSequence.push(randomIndex);
 
+  const button = document.getElementById(`button${randomIndex}`);
+  button.src = "images/button_RED.png";
+  playBeep();
 
-        randomIndex=Math.floor(Math.random()*8)+1;
+  flashTimeout = setTimeout(() => {
+    button.src = "images/button_BLUE.png";
+  }, 100);
 
-        console.log(randomIndex);
-        pressSequence.push(randomIndex);
-        for(var i=0; i< tiles.length;i++){
-            if(tiles[i].id==randomIndex){
-                var button=document.getElementById(tiles[i].text);
-                button.src="images/button_RED.png";
-                end = new Date().getTime();
-                var time = end - start;
-                interval2=setInterval(function() { setColorBack(button); },70);
-            }
-        }
-        if(intervalSteps>0){
-            console.log(intervalSteps);
-            if (intervalSteps > 25) intervalLength -= 100;
-            else if (intervalSteps > 20) intervalLength -= 75;
-            else if (intervalSteps > 15) intervalLength -= 50;
-            else if (intervalSteps > 10) intervalLength -= 30;
-            else if (intervalSteps > 5) intervalLength -= 20;
-            else intervalLength -= 10;
+  if (intervalSteps > 0) {
+    if (intervalSteps > 25) intervalLength -= 100;
+    else if (intervalSteps > 20) intervalLength -= 75;
+    else if (intervalSteps > 15) intervalLength -= 50;
+    else if (intervalSteps > 10) intervalLength -= 30;
+    else if (intervalSteps > 5) intervalLength -= 20;
+    else intervalLength -= 10;
 
-            intervalSteps--;
-            console.log("Intervalli lyhennetty "+intervalSteps+" " + intervalLength);
-        }
-        clearInterval(interval);
-        interval = setInterval(blinkButtonColors, intervalLength);
-    }
+    intervalSteps--;
+  }
 
-    interval=setInterval(blinkButtonColors, intervalLength);
-    start2 = new Date().getTime();
+  clearInterval(interval);
+  interval = setInterval(flashRandomTile, intervalLength);
 }
 
-function setColorBack(button){
-    start = new Date().getTime();
-    button.src="images/button_BLUE.png";
+function setGameOn() {
+  gameOn = true;
+  gameOver = false;
+  score = 0;
+  intervalLength = 2000;
+  intervalSteps = 30;
+  pressedButtons = [];
+  pressSequence = [];
+
+  document.getElementById("gameScreen").style.display = "grid";
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("gameOverScreen").style.display = "none";
+
+  clearInterval(interval);
+  interval = setInterval(flashRandomTile, intervalLength);
 }
 
-function setButtons() {
-    for(var i=1;i<=9;i++){
-        var tile={
-            id:i,
-            text:"button"+i,
-        };
-        tiles.push(tile);
-    }
+function gameOverScreen() {
+  gameOver = true;
+  gameOn = false;
+  clearInterval(interval);
+  clearTimeout(flashTimeout);
+
+  document.getElementById("gameScreen").style.display = "none";
+  document.getElementById("gameOverScreen").style.display = "flex";
+
+  document.getElementById("finalScoreText").innerText = "Your score: " + score;
 }
 
-function playerPress(value){
-    console.log(value);
+function backToTitleScreen() {
+  gameOver = false;
+  gameOn = false;
+  document.getElementById("gameOverScreen").style.display = "none";
+  document.getElementById("startScreen").style.display = "flex";
 }
 
-function setGameOn(){
-    gameOn=true;
-    var gameScreen = document.getElementById("gameScreen");  
-    gameScreen.style.display="";
-    var startScreen = document.getElementById("startScreen");  
-    startScreen.style.display="none";
-    score=0;
-    intervalLength=2000;
-    intervalSteps=30;
-    setButtons();
-    myFunction();
-}
+// === AUDIO FEEDBACK ===
+function playBeep() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
 
-function gameOverScreen(){
-    gameOver=true;
-    gameOn=false;
-    tiles=[];
-    pressedButtons=[];
-    pressSequence=[];
-    randomIndex=0;
-    intervalLength=2000;
-    intervalSteps=30;
+  osc.connect(gain);
+  gain.connect(ctx.destination);
 
-    var gameScreen = document.getElementById("gameScreen");  
-    gameScreen.style.display="none";
-    var gameOverScreen = document.getElementById("gameOverScreen");  
-    gameOverScreen.style.display="block";
+  osc.type = "square";
+  osc.frequency.value = 600;
+  gain.gain.setValueAtTime(0.1, ctx.currentTime);
 
-    clearInterval(interval);
-    clearInterval(interval2);
-    var text = document.getElementById("finalScoreText");   
-    text.innerText="Your score: "+score;
-}
-
-function backToTitleScreen(){
-    gameOver=false;
-    gameOn=false;
-    var gameOverScreen = document.getElementById("gameOverScreen");  
-    gameOverScreen.style.display="none";
-    var startScreen = document.getElementById("startScreen");  
-    startScreen.style.display="block";
+  osc.start();
+  osc.stop(ctx.currentTime + 0.1);
 }
