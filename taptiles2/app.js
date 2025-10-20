@@ -24,6 +24,7 @@ let randomIndex = 0;
 let score = 0;
 let gameOn = false;
 let gameOver = false;
+let titleScreen = false
 let intervalLength = 2000;
 let intervalSteps = 30;
 
@@ -31,8 +32,8 @@ let intervalSteps = 30;
 document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(e) {
-  e.stopPropagation();
-
+    e.stopPropagation();
+    console.log(e.code);
     // --- Handle softkeys for navigation ---
     if (e.code === "SoftRight") {
         // Only act if the game is running or game over
@@ -52,103 +53,113 @@ function handleKeyPress(e) {
   if (KEYPAD_MAP[e.code]) {
     const tilePressed = KEYPAD_MAP[e.code];
 
+    console.log("gameOn: "+gameOn+", gameOver: "+gameOver+", titleScreen: "+titleScreen);
     if (gameOn) {
-      pressedButtons.push(tilePressed);
-      checkButtonPress();
+        pressedButtons.push(tilePressed);
+        checkButtonPress();
     } else if (gameOver) {
-      backToTitleScreen();
-    } else {
-      setGameOn();
+        backToTitleScreen();
+    } else if(titleScreen){
+        setGameOn();
+    } else{
+        setGameOn();
     }
   }
 }
 
 // === GAME LOGIC ===
 function checkButtonPress() {
-  const pressedCount = pressedButtons.length;
-  if (pressedButtons[pressedCount - 1] === pressSequence[pressedCount - 1]) {
-    score++;
-  } else {
-    gameOverScreen();
-  }
+    const pressedCount = pressedButtons.length;
+    if (pressedButtons[pressedCount - 1] === pressSequence[pressedCount - 1]) {
+        score++;
+    } else {
+        gameOverScreen();
+    }
 }
 
 function flashRandomTile() {
-  randomIndex = Math.floor(Math.random() * 9) + 1;
-  pressSequence.push(randomIndex);
+    randomIndex = Math.floor(Math.random() * 9) + 1;
+    pressSequence.push(randomIndex);
 
-  const button = document.getElementById(`button${randomIndex}`);
-  button.src = "images/button_RED.png";
-  playBeep();
+    const button = document.getElementById(`button${randomIndex}`);
+    button.src = "images/button_RED.png";
+    playBeep();
 
-  flashTimeout = setTimeout(() => {
-    button.src = "images/button_BLUE.png";
-  }, 100);
+    flashTimeout = setTimeout(() => {
+        button.src = "images/button_BLUE.png";
+    }, 100);
 
-  if (intervalSteps > 0) {
-    if (intervalSteps > 25) intervalLength -= 100;
-    else if (intervalSteps > 20) intervalLength -= 75;
-    else if (intervalSteps > 15) intervalLength -= 50;
-    else if (intervalSteps > 10) intervalLength -= 30;
-    else if (intervalSteps > 5) intervalLength -= 20;
-    else intervalLength -= 10;
+    if (intervalSteps > 0) {
+        if (intervalSteps > 25) intervalLength -= 100;
+        else if (intervalSteps > 20) intervalLength -= 75;
+        else if (intervalSteps > 15) intervalLength -= 50;
+        else if (intervalSteps > 10) intervalLength -= 30;
+        else if (intervalSteps > 5) intervalLength -= 20;
+        else intervalLength -= 10;
 
-    intervalSteps--;
-  }
+        intervalSteps--;
+    }
 
-  clearInterval(interval);
-  interval = setInterval(flashRandomTile, intervalLength);
+    clearInterval(interval);
+    interval = setInterval(flashRandomTile, intervalLength);
 }
 
 function setGameOn() {
-  gameOn = true;
-  gameOver = false;
-  score = 0;
-  intervalLength = 2000;
-  intervalSteps = 30;
-  pressedButtons = [];
-  pressSequence = [];
+    console.log("setGameOn");
+    gameOn = true;
+    gameOver = false;
+    titleScreen = false;
+    score = 0;
+    intervalLength = 2000;
+    intervalSteps = 30;
+    pressedButtons = [];
+    pressSequence = [];
 
-  document.getElementById("gameScreen").style.display = "grid";
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("gameOverScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "grid";
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("gameOverScreen").style.display = "none";
 
-  clearInterval(interval);
-  interval = setInterval(flashRandomTile, intervalLength);
+    clearInterval(interval);
+    interval = setInterval(flashRandomTile, intervalLength);
 }
 
 function gameOverScreen() {
-  gameOver = true;
-  gameOn = false;
-  clearInterval(interval);
-  clearTimeout(flashTimeout);
+    gameOver = true;
+    gameOn = false;
+    titleScreen = false;
+    clearInterval(interval);
+    clearTimeout(flashTimeout);
 
-  document.getElementById("gameScreen").style.display = "none";
-  document.getElementById("gameOverScreen").style.display = "flex";
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("gameOverScreen").style.display = "flex";
 
-  document.getElementById("finalScoreText").innerText = "Your score: " + score;
+    document.getElementById("finalScoreText").innerText = "Your score: " + score;
 }
 
 function backToTitleScreen() {
-  gameOver = false;
-  gameOn = false;
-  document.getElementById("gameOverScreen").style.display = "none";
-  document.getElementById("startScreen").style.display = "flex";
+    gameOver = false;
+    gameOn = false;
+    titleScreen = true;
+    clearInterval(interval);
+    clearTimeout(flashTimeout);
+    document.getElementById("gameOverScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("startScreen").style.display = "flex";
 }
 
 // === AUDIO FEEDBACK ===
 function playBeep() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-  osc.connect(gain);
-  gain.connect(ctx.destination);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
 
-  osc.type = "square";
-  osc.frequency.value = 600;
-  gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    osc.type = "square";
+    osc.frequency.value = 600;
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
 
-  osc.start();
-  osc.stop(ctx.currentTime + 0.1);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.1);
 }
