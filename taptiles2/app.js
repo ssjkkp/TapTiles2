@@ -9,8 +9,8 @@ var randomIndex=0;
 var score=0;
 var gameOn=false;
 var gameOver=false;
-var intervalLengthTest=2000;
-var intervalStepsTest=30;
+var intervalLength=2000;
+var intervalSteps=30;
 var start;
 var end;
 var start2;
@@ -38,32 +38,24 @@ const KEYPAD_MAP = PC_KEYPAD_MAP;
 function logKey(e) {
     console.log(e.code);
     e.stopPropagation();
-     //if(e.code.startsWith("Digit")){
-        //if(e.code.startsWith("Numpad")){
             if(gameOn){
-                //console.log("Game is on");
                 const tilePressed = KEYPAD_MAP[e.code]
                 pressedButtons.push(tilePressed);
-                console.log("e.code.substr(6): " + e.code.substr(6));
-                console.log("tilePressed: " + tilePressed)
+                // console.log("e.code.substr(6): " + e.code.substr(6));
+                // console.log("tilePressed: " + tilePressed)
                 checkButtonPress();
             }
             else if(gameOver){
-                console.log("Game is over");
                 backToTitleScreen()
             }
             else if(!gameOn && !gameOver){
-                console.log("Game is not on or over");
                 setGameOn();
             }
-    //}
 }
 function checkButtonPress(){
     var pressedCount=pressedButtons.length;
     if(pressedButtons[pressedCount-1]==pressSequence[pressedCount-1]){
         score++;
-        // var scoreText=document.getElementById("scoreText");
-        // scoreText.innerText=score.toString();
     }
     else{
         gameOverScreen();
@@ -88,49 +80,29 @@ function myFunction() {
         for(var i=0; i< tiles.length;i++){
             if(tiles[i].id==randomIndex){
                 var button=document.getElementById(tiles[i].text);
-                // var scoreText=document.getElementById("scoreText");
-                // scoreText.innerText=tiles[i].text.toString();
                 button.src="images/button_RED.png";
                 end = new Date().getTime();
                 var time = end - start;
-                //console.log('Execution time Interval2: ' + time);
                 interval2=setInterval(function() { setColorBack(button); },70);
             }
         }
-        if(intervalStepsTest>0){
-            console.log(intervalStepsTest);
-            if(intervalStepsTest>25){
-                intervalLengthTest=intervalLengthTest-100;
-                console.log(-100);
-            }
-            else if(intervalStepsTest>20){
-                intervalLengthTest=intervalLengthTest-75;
-                console.log(-75);
-            }
-            else if(intervalStepsTest>15){
-                intervalLengthTest=intervalLengthTest-50;
-                console.log(-50);
-            }
-            else if(intervalStepsTest>10){
-                intervalLengthTest=intervalLengthTest-30;
-                console.log(-30);
-            }
-            else if(intervalStepsTest>5){
-                intervalLengthTest=intervalLengthTest-20;
-                console.log(-20);
-            }
-            else if(intervalStepsTest>0){
-                intervalLengthTest=intervalLengthTest-10;
-                console.log(-10);
-            }
-            intervalStepsTest=intervalStepsTest-1;
-            console.log("Intervalli lyhennetty "+intervalStepsTest+" " + intervalLengthTest);
+        if(intervalSteps>0){
+            console.log(intervalSteps);
+            if (intervalSteps > 25) intervalLength -= 100;
+            else if (intervalSteps > 20) intervalLength -= 75;
+            else if (intervalSteps > 15) intervalLength -= 50;
+            else if (intervalSteps > 10) intervalLength -= 30;
+            else if (intervalSteps > 5) intervalLength -= 20;
+            else intervalLength -= 10;
+
+            intervalSteps--;
+            console.log("Intervalli lyhennetty "+intervalSteps+" " + intervalLength);
         }
         clearInterval(interval);
-        interval=setInterval(blinkButtonColors, intervalLengthTest);
+        interval = setInterval(blinkButtonColors, intervalLength);
     }
 
-    interval=setInterval(blinkButtonColors, intervalLengthTest);
+    interval=setInterval(blinkButtonColors, intervalLength);
     start2 = new Date().getTime();
 }
 
@@ -150,7 +122,6 @@ function setButtons() {
 }
 
 function playerPress(value){
-    //For testing purposes only
     console.log(value);
 }
 
@@ -161,8 +132,8 @@ function setGameOn(){
     var startScreen = document.getElementById("startScreen");  
     startScreen.style.display="none";
     score=0;
-    intervalLengthTest=2000;
-    intervalStepsTest=30;
+    intervalLength=2000;
+    intervalSteps=30;
     setButtons();
     myFunction();
 }
@@ -174,8 +145,8 @@ function gameOverScreen(){
     pressedButtons=[];
     pressSequence=[];
     randomIndex=0;
-    intervalLengthTest=2000;
-    intervalStepsTest=30;
+    intervalLength=2000;
+    intervalSteps=30;
 
     var gameScreen = document.getElementById("gameScreen");  
     gameScreen.style.display="none";
