@@ -24,7 +24,8 @@ let randomIndex = 0;
 let score = 0;
 let gameOn = false;
 let gameOver = false;
-let titleScreen = false
+let topScoresScreen = false;
+let titleScreen = true
 let intervalLength = 2000;
 let intervalSteps = 30;
 
@@ -41,11 +42,30 @@ function handleKeyPress(e) {
             backToTitleScreen();
             return;
         }
+        else{
+            setGameOn();
+        }
     }
 
-    if (e.code === "Escape") {
-        if (gameOn || gameOver) {
+    if (e.code === "SoftLeft") {
+        //if (gameOn || gameOver) {
+            toTopScoresScreen();
+            return;
+        //}
+    }
+
+    if (e.code === "Enter") {
+        if (gameOn || gameOver || topScoresScreen) {
             backToTitleScreen();
+            return;
+        }
+        else{
+            setGameOn();
+        }
+    }
+    if (e.code === "Escape") {
+        if (titleScreen) {
+            toTopScoresScreen();
             return;
         }
     }
@@ -109,15 +129,18 @@ function setGameOn() {
     gameOn = true;
     gameOver = false;
     titleScreen = false;
+    topScoresScreen = false;
     score = 0;
     intervalLength = 2000;
     intervalSteps = 30;
     pressedButtons = [];
     pressSequence = [];
 
-    document.getElementById("gameScreen").style.display = "grid";
+    document.getElementById("topScoresScreen").style.display = "none";
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("gameOverScreen").style.display = "none";
+
+    document.getElementById("gameScreen").style.display = "grid";
 
     clearInterval(interval);
     interval = setInterval(flashRandomTile, intervalLength);
@@ -127,24 +150,42 @@ function gameOverScreen() {
     gameOver = true;
     gameOn = false;
     titleScreen = false;
+    topScoresScreen = false;
     clearInterval(interval);
     clearTimeout(flashTimeout);
 
     document.getElementById("gameScreen").style.display = "none";
-    document.getElementById("gameOverScreen").style.display = "flex";
+    document.getElementById("topScoresScreen").style.display = "none";
 
+    document.getElementById("gameOverScreen").style.display = "flex";
     document.getElementById("finalScoreText").innerText = "Your score: " + score;
 }
 
 function backToTitleScreen() {
     gameOver = false;
     gameOn = false;
+    topScoresScreen = false;
     titleScreen = true;
     clearInterval(interval);
     clearTimeout(flashTimeout);
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("topScoresScreen").style.display = "none";
+
     document.getElementById("startScreen").style.display = "flex";
+}
+
+function toTopScoresScreen(){
+    gameOver = false;
+    gameOn = false;
+    titleScreen = false;
+    topScoresScreen = true;
+    clearInterval(interval);
+    clearTimeout(flashTimeout);
+    document.getElementById("gameOverScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("topScoresScreen").style.display = "flex";
 }
 
 // === AUDIO FEEDBACK ===
