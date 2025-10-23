@@ -93,7 +93,10 @@ function checkButtonPress() {
     if (pressedButtons[pressedCount - 1] === pressSequence[pressedCount - 1]) {
         score++;
     } else {
-        gameOverScreen();
+        // Player failed — game ends
+        const { scores, rank } = addNewScore(score);
+        updateTopScoresScreen();
+        gameOverScreen(rank);
     }
 }
 
@@ -146,7 +149,7 @@ function setGameOn() {
     interval = setInterval(flashRandomTile, intervalLength);
 }
 
-function gameOverScreen() {
+function gameOverScreen(rank) {
     gameOver = true;
     gameOn = false;
     titleScreen = false;
@@ -158,7 +161,12 @@ function gameOverScreen() {
     document.getElementById("topScoresScreen").style.display = "none";
 
     document.getElementById("gameOverScreen").style.display = "flex";
-    document.getElementById("finalScoreText").innerText = "Your score: " + score;
+
+    let finalText = "Your score: " + score;
+    if (rank) {
+        finalText += `\nNew High Score! #${rank}`;
+    }
+    document.getElementById("finalScoreText").innerText = finalText;
 }
 
 function backToTitleScreen() {
@@ -168,6 +176,7 @@ function backToTitleScreen() {
     titleScreen = true;
     clearInterval(interval);
     clearTimeout(flashTimeout);
+
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "none";
     document.getElementById("topScoresScreen").style.display = "none";
@@ -176,16 +185,20 @@ function backToTitleScreen() {
 }
 
 function toTopScoresScreen(){
+
     gameOver = false;
     gameOn = false;
     titleScreen = false;
     topScoresScreen = true;
     clearInterval(interval);
     clearTimeout(flashTimeout);
+
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "none";
     document.getElementById("startScreen").style.display = "none";
+
     document.getElementById("topScoresScreen").style.display = "flex";
+    updateTopScoresScreen();
 }
 
 // === AUDIO FEEDBACK ===
@@ -203,4 +216,36 @@ function playBeep() {
 
     osc.start();
     osc.stop(ctx.currentTime + 0.1);
+}
+
+// === SCORE STORAGE ===
+function loadTopScores() {
+    return JSON.parse(localStorage.getItem("topScores")) || [];
+}
+
+function saveTopScores(scores) {
+    localStorage.setItem("topScores", JSON.stringify(scores));
+}
+
+function addNewScore(newScore) {
+    let scores = loadTopScores();
+    scores.push(newScore);
+    scores.sort((a, b) => b - a); // highest first
+    const rank = scores.indexOf(newScore) + 1; // find where this score landed
+    scores = scores.slice(0, 5); // keep top 5
+    saveTopScores(scores);
+    return { scores, rank: rank <= 5 ? rank : null }; // return rank if in top 5
+}
+
+function updateTopScoresScreen() {
+    const scores = loadTopScores();
+    const listDiv = document.getElementById("scoresList");
+    listDiv.innerHTML = ""; // clear previous entries
+    for (let i = 0; i < scores.length; i++) {
+        const rank = i + 1;
+        const scoreText = `${rank} - ${scores[i]} pts`;
+        const p = document.createElement("p");
+        p.textContent = scoreText;
+        listDiv.appendChild(p);
+    }
 }
