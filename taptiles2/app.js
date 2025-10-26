@@ -7,14 +7,14 @@ const PC_KEYPAD_MAP = {
 
 // Mapping for KaiOS 8110 keypad layout
 const KAIOS_KEYPAD_MAP = {
-  'Numpad1': 1, 'Numpad2': 2, 'Numpad3': 3,
-  'Numpad4': 4, 'Numpad5': 5, 'Numpad6': 6,
-  'Numpad7': 7, 'Numpad8': 8, 'Numpad9': 9
+  'Digit1': 1, 'Digit2': 2, 'Digit3': 3,
+  'Digit4': 4, 'Digit5': 5, 'Digit6': 6,
+  'Digit7': 7, 'Digit8': 8, 'Digit9': 9
 };
 
 // Choose which layout to test:
-const KEYPAD_MAP = PC_KEYPAD_MAP;
-// const KEYPAD_MAP = KAIOS_KEYPAD_MAP;
+//const KEYPAD_MAP = PC_KEYPAD_MAP;
+const KEYPAD_MAP = KAIOS_KEYPAD_MAP;
 
 let tiles = [];
 let pressSequence = [];
@@ -34,9 +34,12 @@ document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(e) {
     e.stopPropagation();
-    console.log(e.code);
+    //For debugging
+    // console.log("code:", e.code, "key:", e.key); "code:  key: SoftLeft" "code: Digit1 key: 1"
+    // console.log(e);
+
     // --- Handle softkeys for navigation ---
-    if (e.code === "SoftRight") {
+    if (e.key === "SoftRight" || e.code === "Enter") {
         // Only act if the game is running or game over
         if (gameOn || gameOver) {
             backToTitleScreen();
@@ -47,33 +50,15 @@ function handleKeyPress(e) {
         }
     }
 
-    if (e.code === "SoftLeft") {
-        //if (gameOn || gameOver) {
+    if (e.key === "SoftLeft" || e.code === "Escape") {
             toTopScoresScreen();
             return;
-        //}
     }
 
-    if (e.code === "Enter") {
-        if (gameOn || gameOver || topScoresScreen) {
-            backToTitleScreen();
-            return;
-        }
-        else{
-            setGameOn();
-        }
-    }
-    if (e.code === "Escape") {
-        if (titleScreen) {
-            toTopScoresScreen();
-            return;
-        }
-    }
+    //This part needs still working
+    if (KEYPAD_MAP[e.code]) {
+        const tilePressed = KEYPAD_MAP[e.code];
 
-  if (KEYPAD_MAP[e.code]) {
-    const tilePressed = KEYPAD_MAP[e.code];
-
-    console.log("gameOn: "+gameOn+", gameOver: "+gameOver+", titleScreen: "+titleScreen);
     if (gameOn) {
         pressedButtons.push(tilePressed);
         checkButtonPress();
@@ -102,6 +87,8 @@ function checkButtonPress() {
 
 function flashRandomTile() {
     randomIndex = Math.floor(Math.random() * 9) + 1;
+    //For debugging
+    //randomIndex = 1;
     pressSequence.push(randomIndex);
 
     const button = document.getElementById(`button${randomIndex}`);
@@ -128,7 +115,6 @@ function flashRandomTile() {
 }
 
 function setGameOn() {
-    console.log("setGameOn");
     gameOn = true;
     gameOver = false;
     titleScreen = false;
