@@ -3,22 +3,41 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #000; /* optional: background behind tiles */
+  background-color: #000;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
   align-items: center;
 }
 
-/* Main game container uses grid */
 #gameScreen {
-  width: 100vw;
-  height: 100vh;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 2px; /* small spacing between tiles */
   background-color: #111;
+  max-height: 280px;
+}
+
+#gameScreen {
+  max-height: 280px;
+}
+
+#gameScreen table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  width: 100vw;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+}
+
+#gameScreen td {
+  padding: 1px;
+}
+
+#gameScreen img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
 }
 
 .tile {
@@ -40,6 +59,9 @@ html, body {
   color: #fff;
   text-align: center;
 }
+#startScreen img {
+  width: 80%;
+}
 
 #gameOverScreen h1, #startScreen .caption {
   font-size: 1.5em;
@@ -49,6 +71,10 @@ html, body {
 #scoresList p {
   margin: 4px 0;
   font-size: 1.2em;
+  width: 80%;
+}
+#scoresList{
+  width: 80%;
 }
 
 .eitbittext {

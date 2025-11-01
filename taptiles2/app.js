@@ -41,7 +41,7 @@ function handleKeyPress(e) {
     // --- Handle softkeys for navigation ---
     if (e.key === "SoftRight" || e.code === "Enter") {
         // Only act if the game is running or game over
-        if (gameOn || gameOver) {
+        if (gameOn || gameOver || topScoresScreen) {
             backToTitleScreen();
             return;
         }
@@ -55,20 +55,13 @@ function handleKeyPress(e) {
             return;
     }
 
-    //This part needs still working
     if (KEYPAD_MAP[e.code]) {
         const tilePressed = KEYPAD_MAP[e.code];
 
     if (gameOn) {
         pressedButtons.push(tilePressed);
         checkButtonPress();
-    } else if (gameOver) {
-        backToTitleScreen();
-    } else if(titleScreen){
-        setGameOn();
-    } else{
-        setGameOn();
-    }
+    } 
   }
 }
 
@@ -79,9 +72,13 @@ function checkButtonPress() {
         score++;
     } else {
         // Player failed — game ends
-        const { scores, rank } = addNewScore(score);
-        updateTopScoresScreen();
-        gameOverScreen(rank);
+        if (score > 0) {
+            const { scores, rank } = addNewScore(score);
+            updateTopScoresScreen();
+            gameOverScreen(rank);
+        } else {
+            gameOverScreen();
+        }
     }
 }
 
