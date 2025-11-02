@@ -29,31 +29,30 @@ let titleScreen = true
 let intervalLength = 2000;
 let intervalSteps = 30;
 
-// === INITIAL SETUP ===
+// INITIAL SETUP
 document.addEventListener('keydown', handleKeyPress);
 
 function handleKeyPress(e) {
     e.stopPropagation();
+
+    switch(e.key){
+        case "SoftRight":
+            handleSoftRight();
+            break;
+        case "SoftLeft":
+            handleSoftLeft();
+            break;
+    }
+
     //For debugging
-    // console.log("code:", e.code, "key:", e.key); "code:  key: SoftLeft" "code: Digit1 key: 1"
-    // console.log(e);
-
-    // --- Handle softkeys for navigation ---
-    if (e.key === "SoftRight" || e.code === "Enter") {
-        // Only act if the game is running or game over
-        if (gameOn || gameOver || topScoresScreen) {
-            backToTitleScreen();
-            return;
-        }
-        else{
-            setGameOn();
-        }
-    }
-
-    if (e.key === "SoftLeft" || e.code === "Escape") {
-            toTopScoresScreen();
-            return;
-    }
+    // switch(e.code){
+    //     case "Enter":
+    //         handleSoftRight();
+    //         break;
+    //     case "Escape":
+    //         handleSoftLeft();
+    //         break;
+    // }
 
     if (KEYPAD_MAP[e.code]) {
         const tilePressed = KEYPAD_MAP[e.code];
@@ -65,13 +64,33 @@ function handleKeyPress(e) {
   }
 }
 
-// === GAME LOGIC ===
+function handleSoftRight(){
+    if(titleScreen){
+        setGameOn();
+        return;
+    }
+    else{
+        console.log("Title screen? "+titleScreen);
+        console.log("backToTitleScreen");
+        backToTitleScreen();
+        return;
+    }
+}
+
+function handleSoftLeft(){
+    console.log("Title screen? "+titleScreen);
+    if(titleScreen){
+        toTopScoresScreen();
+        return;
+    }
+}
+
+//GAME LOGIC
 function checkButtonPress() {
     const pressedCount = pressedButtons.length;
     if (pressedButtons[pressedCount - 1] === pressSequence[pressedCount - 1]) {
         score++;
     } else {
-        // Player failed — game ends
         if (score > 0) {
             const { scores, rank } = addNewScore(score);
             updateTopScoresScreen();
@@ -130,6 +149,8 @@ function setGameOn() {
 
     clearInterval(interval);
     interval = setInterval(flashRandomTile, intervalLength);
+
+    updateSoftKeyTexts("","Back");
 }
 
 function gameOverScreen(rank) {
@@ -150,6 +171,8 @@ function gameOverScreen(rank) {
         finalText += `\nNew High Score! #${rank}`;
     }
     document.getElementById("finalScoreText").innerText = finalText;
+
+    updateSoftKeyTexts("","Back");
 }
 
 function backToTitleScreen() {
@@ -165,6 +188,8 @@ function backToTitleScreen() {
     document.getElementById("topScoresScreen").style.display = "none";
 
     document.getElementById("startScreen").style.display = "flex";
+
+    updateSoftKeyTexts("Top Scores","New Game");
 }
 
 function toTopScoresScreen(){
@@ -182,9 +207,16 @@ function toTopScoresScreen(){
 
     document.getElementById("topScoresScreen").style.display = "flex";
     updateTopScoresScreen();
+
+    updateSoftKeyTexts("","Back");
 }
 
-// === AUDIO FEEDBACK ===
+function updateSoftKeyTexts(leftKey, rightKey){
+    document.getElementById("softkey-left").textContent = leftKey || ""
+    document.getElementById("softkey-right").textContent = rightKey || ""
+}
+
+//AUDIO FEEDBACK
 function playBeep() {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
@@ -201,7 +233,7 @@ function playBeep() {
     osc.stop(ctx.currentTime + 0.1);
 }
 
-// === SCORE STORAGE ===
+//SCORE STORAGE
 function loadTopScores() {
     return JSON.parse(localStorage.getItem("topScores")) || [];
 }
@@ -213,9 +245,9 @@ function saveTopScores(scores) {
 function addNewScore(newScore) {
     let scores = loadTopScores();
     scores.push(newScore);
-    scores.sort((a, b) => b - a); // highest first
-    const rank = scores.indexOf(newScore) + 1; // find where this score landed
-    scores = scores.slice(0, 5); // keep top 5
+    scores.sort((a, b) => b - a);
+    const rank = scores.indexOf(newScore) + 1;
+    scores = scores.slice(0, 5);
     saveTopScores(scores);
     return { scores, rank: rank <= 5 ? rank : null }; // return rank if in top 5
 }
@@ -223,12 +255,25 @@ function addNewScore(newScore) {
 function updateTopScoresScreen() {
     const scores = loadTopScores();
     const listDiv = document.getElementById("scoresList");
-    listDiv.innerHTML = ""; // clear previous entries
+    listDiv.innerHTML = "";
     for (let i = 0; i < scores.length; i++) {
         const rank = i + 1;
         const scoreText = `${rank} - ${scores[i]} pts`;
         const p = document.createElement("p");
         p.textContent = scoreText;
         listDiv.appendChild(p);
+    }
+}
+
+//App closing
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        handleAppHidden();
+    }
+});
+
+function handleAppHidden() {
+    if (gameOn) {
+        backToTitleScreen()
     }
 }
