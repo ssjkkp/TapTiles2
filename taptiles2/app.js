@@ -26,6 +26,7 @@ let gameOn = false;
 let gameOver = false;
 let topScoresScreen = false;
 let titleScreen = true
+let infoScreen = false;
 let intervalLength = 2000;
 let intervalSteps = 30;
 
@@ -41,6 +42,9 @@ function handleKeyPress(e) {
             break;
         case "SoftLeft":
             handleSoftLeft();
+            break;
+        case "Enter":
+            handleSoftCenter();
             break;
     }
 
@@ -70,18 +74,21 @@ function handleSoftRight(){
         return;
     }
     else{
-        console.log("Title screen? "+titleScreen);
-        console.log("backToTitleScreen");
         backToTitleScreen();
         return;
     }
 }
 
 function handleSoftLeft(){
-    console.log("Title screen? "+titleScreen);
     if(titleScreen){
         toTopScoresScreen();
         return;
+    }
+}
+
+function handleSoftCenter(){
+    if(titleScreen){
+        toInfoScreen();
     }
 }
 
@@ -144,13 +151,14 @@ function setGameOn() {
     document.getElementById("topScoresScreen").style.display = "none";
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("gameOverScreen").style.display = "none";
+    document.getElementById("infoScreen").style.display = "none";
 
     document.getElementById("gameScreen").style.display = "grid";
 
     clearInterval(interval);
     interval = setInterval(flashRandomTile, intervalLength);
 
-    updateSoftKeyTexts("","Back");
+    updateSoftKeyTexts("","","Back");
 }
 
 function gameOverScreen(rank) {
@@ -163,16 +171,17 @@ function gameOverScreen(rank) {
 
     document.getElementById("gameScreen").style.display = "none";
     document.getElementById("topScoresScreen").style.display = "none";
+    document.getElementById("infoScreen").style.display = "none";
 
     document.getElementById("gameOverScreen").style.display = "flex";
 
     let finalText = "Your score: " + score;
     if (rank) {
-        finalText += `\nNew High Score! #${rank}`;
+        finalText += `\nNew High Score #${rank}`;
     }
     document.getElementById("finalScoreText").innerText = finalText;
 
-    updateSoftKeyTexts("","Back");
+    updateSoftKeyTexts("","","Back");
 }
 
 function backToTitleScreen() {
@@ -186,14 +195,14 @@ function backToTitleScreen() {
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "none";
     document.getElementById("topScoresScreen").style.display = "none";
+    document.getElementById("infoScreen").style.display = "none";
 
     document.getElementById("startScreen").style.display = "flex";
 
-    updateSoftKeyTexts("Top Scores","New Game");
+    updateSoftKeyTexts("Top Scores","Info","New Game");
 }
 
 function toTopScoresScreen(){
-
     gameOver = false;
     gameOn = false;
     titleScreen = false;
@@ -204,15 +213,33 @@ function toTopScoresScreen(){
     document.getElementById("gameOverScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "none";
     document.getElementById("startScreen").style.display = "none";
+    document.getElementById("infoScreen").style.display = "none";
 
     document.getElementById("topScoresScreen").style.display = "flex";
     updateTopScoresScreen();
 
-    updateSoftKeyTexts("","Back");
+    updateSoftKeyTexts("","","Back");
 }
 
-function updateSoftKeyTexts(leftKey, rightKey){
+function toInfoScreen(){
+    gameOver = false;
+    gameOn = false;
+    titleScreen = false;
+    topScoresScreen = false;
+    infoScreen = true;
+
+    document.getElementById("gameOverScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("topScoresScreen").style.display = "none";
+
+    document.getElementById("infoScreen").style.display = "flex";
+    updateSoftKeyTexts("","","Back");
+}
+
+function updateSoftKeyTexts(leftKey,center, rightKey){
     document.getElementById("softkey-left").textContent = leftKey || ""
+    document.getElementById("softkey-center").textContent = center || "";
     document.getElementById("softkey-right").textContent = rightKey || ""
 }
 

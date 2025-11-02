@@ -12,7 +12,7 @@ html, body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 2px; /* small spacing between tiles */
+  gap: 1px; /* small spacing between tiles */
   background-color: #111;
   max-height: 280px;
 }
@@ -48,7 +48,7 @@ html, body {
 }
 
 /* Start and Game Over screens centered */
-#startScreen, #gameOverScreen, #topScoresScreen{
+#startScreen, #gameOverScreen, #topScoresScreen, #infoScreen{
   width: 100%;
   height: 100%;
   display: flex;
@@ -72,6 +72,7 @@ html, body {
   margin: 4px 0;
   font-size: 1.2em;
   width: 80%;
+  align-items: center;
 }
 #scoresList{
   width: 80%;
