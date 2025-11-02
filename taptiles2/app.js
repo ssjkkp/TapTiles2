@@ -271,12 +271,25 @@ function saveTopScores(scores) {
 
 function addNewScore(newScore) {
     let scores = loadTopScores();
+    const prevScores = [...scores];
+
     scores.push(newScore);
     scores.sort((a, b) => b - a);
-    const rank = scores.indexOf(newScore) + 1;
+
+    const tooMany = scores.length > 5;
+    const lowestScore = scores[4];
+
+    if (prevScores.length >= 5 && newScore === prevScores[prevScores.length - 1]) {
+        return { scores: prevScores, rank: null };
+    }
+
     scores = scores.slice(0, 5);
     saveTopScores(scores);
-    return { scores, rank: rank <= 5 ? rank : null }; // return rank if in top 5
+
+    const rank = scores.indexOf(newScore) + 1;
+    const validRank = rank <= 5 ? rank : null;
+
+    return { scores, rank: validRank };
 }
 
 function updateTopScoresScreen() {

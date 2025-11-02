@@ -30,14 +30,14 @@ html, body {
 }
 
 #gameScreen td {
-  padding: 1px;
+  padding: 0px;
 }
 
 #gameScreen img {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 6px;
+  border-radius: 2px;
 }
 
 .tile {
