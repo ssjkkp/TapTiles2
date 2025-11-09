@@ -138,6 +138,7 @@ function flashRandomTile() {
 }
 
 function setGameOn() {
+
     gameOn = true;
     gameOver = false;
     titleScreen = false;
@@ -157,7 +158,6 @@ function setGameOn() {
 
     clearInterval(interval);
     interval = setInterval(flashRandomTile, intervalLength);
-
     updateSoftKeyTexts("","","Back");
 }
 

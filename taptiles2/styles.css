@@ -59,6 +59,7 @@ html, body {
   color: #fff;
   text-align: center;
 }
+
 #startScreen img {
   width: 80%;
 }
@@ -74,8 +75,13 @@ html, body {
   width: 80%;
   align-items: center;
 }
-#scoresList{
+
+#infoScreen p {
+  font-size: 0.6em;
   width: 80%;
+}
+#infoScreenSmall{
+  font-size: 0.4em;
 }
 
 .eitbittext {
