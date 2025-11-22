@@ -97,6 +97,7 @@ function checkButtonPress() {
     const pressedCount = pressedButtons.length;
     if (pressedButtons[pressedCount - 1] === pressSequence[pressedCount - 1]) {
         score++;
+        document.getElementById("scoreDisplay").textContent = "Score: " + score;
     } else {
         if (score > 0) {
             const { scores, rank } = addNewScore(score);
@@ -144,10 +145,17 @@ function setGameOn() {
     titleScreen = false;
     topScoresScreen = false;
     score = 0;
+    document.getElementById("scoreDisplay").textContent = "Score: " + score;
     intervalLength = 2000;
     intervalSteps = 30;
     pressedButtons = [];
     pressSequence = [];
+
+    //Make sure all buttons are blue at the start
+    for (let i = 1; i <= 9; i++) {
+        document.getElementById("button" + i).src = "images/button_BLUE.png";
+    }
+
 
     document.getElementById("topScoresScreen").style.display = "none";
     document.getElementById("startScreen").style.display = "none";
@@ -155,6 +163,7 @@ function setGameOn() {
     document.getElementById("infoScreen").style.display = "none";
 
     document.getElementById("gameScreen").style.display = "grid";
+
 
     clearInterval(interval);
     interval = setInterval(flashRandomTile, intervalLength);
@@ -215,7 +224,7 @@ function toTopScoresScreen(){
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("infoScreen").style.display = "none";
 
-    document.getElementById("topScoresScreen").style.display = "flex";
+    document.getElementById("topScoresScreen").style.display = "block";
     updateTopScoresScreen();
 
     updateSoftKeyTexts("","","Back");

@@ -40,6 +40,22 @@ html, body {
   border-radius: 2px;
 }
 
+#gameScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tileWrapper {
+    display: block;
+}
+
+#scoreDisplay {
+    margin-top: 8px;
+    font-size: 0.8em;
+    color: white;
+}
+
 .tile {
   width: 100%;
   height: 100%;
@@ -69,19 +85,21 @@ html, body {
   color: #fff;
 }
 
+
+/** TOP SCORES **/
+#topScoresScreen h1 {
+    font-size: 1.5em;
+    margin-top: 10px;
+}
+
 #scoresList p {
-  margin: 4px 0;
-  font-size: 1.2em;
-  width: 80%;
-  align-items: center;
+    margin: 4px 0;
+    font-size: 1.2em; 
 }
 
 #infoScreen p {
   font-size: 0.6em;
   width: 80%;
-}
-#infoScreenSmall{
-  font-size: 0.4em;
 }
 
 .eitbittext {
@@ -108,4 +126,11 @@ html, body {
 #softkeys span {
   width: 33%;
   text-align: center;
+}
+
+#scoreDisplay {
+    font-size: 0.7em;        /* small but readable on 240×320 */
+    margin-top: 4px;
+    text-align: center;
+    color: white;
 }
