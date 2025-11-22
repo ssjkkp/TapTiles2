@@ -3,57 +3,67 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #000;
+  background-color: #135859;
   overflow: hidden;
   align-items: center;
 }
 
-#gameScreen {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 1px; /* small spacing between tiles */
-  background-color: #111;
-  max-height: 280px;
-}
-
-#gameScreen {
-  max-height: 280px;
-}
-
-#gameScreen table {
-  border-collapse: collapse;
-  margin: 0 auto;
-  width: 100vw;
-  max-width: 280px;
-  aspect-ratio: 1 / 1;
-}
-
-#gameScreen td {
-  padding: 0px;
-}
-
-#gameScreen img {
+/** GENERAL **/
+#startScreen, #gameOverScreen, #topScoresScreen, #infoScreen{
   width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 2px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
 }
 
+#gameOverScreen h1, #startScreen .caption {
+  font-size: 1.5em;
+  color: #fff;
+}
+
+.eitbittext {
+  color: #0ff;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/** START SCREEN **/
+#startScreen img {
+  width: 80%;
+}
+
+/** GAME SCREEN **/
 #gameScreen {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.tileWrapper {
+.tileWrapper table {
+    border-collapse: collapse;
+    margin-top: 10px;
+    width: 100vw;
+    max-width: 280px;
+    aspect-ratio: 1 / 1;
+}
+
+.tileWrapper td {
+    padding: 0;
+}
+
+.tileWrapper img {
+    width: 100%;
     display: block;
 }
 
 #scoreDisplay {
     margin-top: 8px;
-    font-size: 0.8em;
+    font-size: 1.0em;
     color: white;
+    text-align: center;
 }
 
 .tile {
@@ -63,30 +73,7 @@ html, body {
   border: 1px solid #333;
 }
 
-/* Start and Game Over screens centered */
-#startScreen, #gameOverScreen, #topScoresScreen, #infoScreen{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #000;
-  color: #fff;
-  text-align: center;
-}
-
-#startScreen img {
-  width: 80%;
-}
-
-#gameOverScreen h1, #startScreen .caption {
-  font-size: 1.5em;
-  color: #fff;
-}
-
-
-/** TOP SCORES **/
+/** TOP SCORES SCREEN **/
 #topScoresScreen h1 {
     font-size: 1.5em;
     margin-top: 10px;
@@ -97,25 +84,23 @@ html, body {
     font-size: 1.2em; 
 }
 
+/** INFOR SCREEN **/
+
 #infoScreen p {
   font-size: 0.6em;
   width: 80%;
 }
 
-.eitbittext {
-  color: #0ff;
-  text-shadow: 1px 1px 2px #000;
-}
-
+/** SOFT KEYS **/
 #softkeys {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 25px;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0);
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -126,11 +111,4 @@ html, body {
 #softkeys span {
   width: 33%;
   text-align: center;
-}
-
-#scoreDisplay {
-    font-size: 0.7em;        /* small but readable on 240×320 */
-    margin-top: 4px;
-    text-align: center;
-    color: white;
 }
