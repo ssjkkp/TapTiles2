@@ -30,6 +30,8 @@ let infoScreen = false;
 let intervalLength = 2000;
 let intervalSteps = 30;
 
+let adShownThisSession = false;
+
 // INITIAL SETUP
 document.addEventListener('keydown', handleKeyPress);
 
@@ -171,6 +173,12 @@ function setGameOn() {
 }
 
 function gameOverScreen(rank) {
+
+    if (!adShownThisSession) {
+        loadKaiAd();
+        adShownThisSession = true;
+    }
+
     gameOver = true;
     gameOn = false;
     titleScreen = false;
@@ -324,5 +332,21 @@ document.addEventListener("visibilitychange", function() {
 function handleAppHidden() {
     if (gameOn) {
         backToTitleScreen()
+    }
+}
+
+//KaiAds
+function loadKaiAd() {
+    try {
+        getKaiAd({
+            publisher: 'test',
+            app: 'TapTiles2',
+            slot: 'default',
+            onerror: err => console.error('KaiAd error:', err),
+            onready: ad => {ad.call('display');
+            }
+        });
+    } catch (e) {
+        console.log('KaiAd load failed', e);
     }
 }
