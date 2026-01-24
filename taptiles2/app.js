@@ -30,7 +30,7 @@ let infoScreen = false;
 let intervalLength = 2000;
 let intervalSteps = 30;
 
-let adShownThisSession = false;
+let gamesPlayedSinceAd = 0;
 
 // INITIAL SETUP
 document.addEventListener('keydown', handleKeyPress);
@@ -174,9 +174,12 @@ function setGameOn() {
 
 function gameOverScreen(rank) {
 
-    if (!adShownThisSession) {
+    // Show ad every 3rd game over
+    if (gamesPlayedSinceAd >= 2) {
         loadKaiAd();
-        adShownThisSession = true;
+        gamesPlayedSinceAd = 0;
+    } else {
+        gamesPlayedSinceAd++;
     }
 
     gameOver = true;
