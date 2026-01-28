@@ -340,16 +340,25 @@ function handleAppHidden() {
 
 //KaiAds
 function loadKaiAd() {
+    // Check if KaiAds SDK is available
+    if (typeof getKaiAd === 'undefined') {
+        console.warn('KaiAds SDK not loaded yet');
+        return;
+    }
+    
     try {
         getKaiAd({
-            publisher: 'test',
-            app: 'TapTiles2',
+            publisher: '88241808-9221-4a75-9d1a-02982f57a0b3',
+            app: 'TapTiles 2',
             slot: 'default',
             onerror: err => console.error('KaiAd error:', err),
-            onready: ad => {ad.call('display');
+            onready: ad => {
+                if (ad && typeof ad.call === 'function') {
+                    ad.call('display');
+                }
             }
         });
     } catch (e) {
-        console.log('KaiAd load failed', e);
+        console.error('KaiAd load failed:', e);
     }
 }
