@@ -31,6 +31,8 @@ let intervalLength = 2000;
 let intervalSteps = 30;
 
 let gamesPlayedSinceAd = 0;
+let preloadedAd = null;
+let adRequestInFlight = false;
 
 // INITIAL SETUP
 document.addEventListener('keydown', handleKeyPress);
@@ -173,15 +175,6 @@ function setGameOn() {
 }
 
 function gameOverScreen(rank) {
-
-    // Show ad every 3rd game over
-    if (gamesPlayedSinceAd >= 2) {
-        loadKaiAd();
-        gamesPlayedSinceAd = 0;
-    } else {
-        gamesPlayedSinceAd++;
-    }
-
     gameOver = true;
     gameOn = false;
     titleScreen = false;
@@ -202,6 +195,16 @@ function gameOverScreen(rank) {
     document.getElementById("finalScoreText").innerText = finalText;
 
     updateSoftKeyTexts("","","Back");
+
+    // Show ad every 3rd game over (after UI updates)
+    if (gamesPlayedSinceAd >= 2) {
+        gamesPlayedSinceAd = 0;
+        setTimeout(() => {
+            showKaiAd();
+        }, 300);
+    } else {
+        gamesPlayedSinceAd++;
+    }
 }
 
 function backToTitleScreen() {
@@ -339,21 +342,80 @@ function handleAppHidden() {
 }
 
 //KaiAds
-function loadKaiAd() {
+function preloadKaiAd() {
     // Check if KaiAds SDK is available
     if (typeof getKaiAd === 'undefined') {
         console.warn('KaiAds SDK not loaded yet');
         return;
     }
-    
+
+    if (adRequestInFlight || preloadedAd) {
+        return;
+    }
+
+    adRequestInFlight = true;
+
     try {
         getKaiAd({
             publisher: '88241808-9221-4a75-9d1a-02982f57a0b3',
             app: 'TapTiles 2',
             slot: 'default',
+            test: 0,  // Set to 1 for testing, 0 for production
+            timeout: 10000,  // 10 second timeout for slow devices
+            onerror: err => {
+                adRequestInFlight = false;
+                console.error('KaiAd error:', err);
+            },
+            onready: ad => {
+                adRequestInFlight = false;
+                preloadedAd = ad;
+                if (ad && typeof ad.on === 'function') {
+                    ad.on('close', () => {
+                        preloadKaiAd();
+                    });
+                }
+            }
+        });
+    } catch (e) {
+        adRequestInFlight = false;
+        console.error('KaiAd load failed:', e);
+    }
+}
+
+function showKaiAd() {
+    // If we already preloaded, show immediately
+    if (preloadedAd && typeof preloadedAd.call === 'function') {
+        try {
+            const adToShow = preloadedAd;
+            preloadedAd = null;
+            adToShow.call('display');
+        } catch (e) {
+            console.error('KaiAd display failed:', e);
+        }
+        return;
+    }
+
+    // Fallback: request and display immediately
+    if (typeof getKaiAd === 'undefined') {
+        console.warn('KaiAds SDK not loaded yet');
+        return;
+    }
+
+    try {
+        getKaiAd({
+            publisher: '88241808-9221-4a75-9d1a-02982f57a0b3',
+            app: 'TapTiles 2',
+            slot: 'default',
+            test: 0,  // Set to 1 for testing, 0 for production
+            timeout: 10000,
             onerror: err => console.error('KaiAd error:', err),
             onready: ad => {
                 if (ad && typeof ad.call === 'function') {
+                    if (typeof ad.on === 'function') {
+                        ad.on('close', () => {
+                            preloadKaiAd();
+                        });
+                    }
                     ad.call('display');
                 }
             }
@@ -362,3 +424,7 @@ function loadKaiAd() {
         console.error('KaiAd load failed:', e);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    preloadKaiAd();
+});
