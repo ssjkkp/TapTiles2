@@ -30,9 +30,15 @@ let infoScreen = false;
 let intervalLength = 2000;
 let intervalSteps = 30;
 
-let gamesPlayedSinceAd = 0;
+let completedSessionsSinceLastAd = 0;
+let startupAdAttempted = false;
 let preloadedAd = null;
 let adRequestInFlight = false;
+
+const KAIADS_PUBLISHER_ID = '88241808-9221-4a75-9d1a-02982f57a0b3';
+const KAIADS_APP_NAME = 'TapTiles 2';
+const KAIADS_SLOT = 'default';
+const KAIADS_TEST_MODE = 0; // Set to 1 for testing, 0 for production submissions.
 
 // INITIAL SETUP
 document.addEventListener('keydown', handleKeyPress);
@@ -196,14 +202,13 @@ function gameOverScreen(rank) {
 
     updateSoftKeyTexts("","","Back");
 
-    // Show ad every 3rd game over (after UI updates)
-    if (gamesPlayedSinceAd >= 2) {
-        gamesPlayedSinceAd = 0;
+    // Count completed sessions and show fullscreen ad every 5 sessions.
+    completedSessionsSinceLastAd++;
+    if (completedSessionsSinceLastAd >= 5) {
+        completedSessionsSinceLastAd = 0;
         setTimeout(() => {
             showKaiAd();
         }, 300);
-    } else {
-        gamesPlayedSinceAd++;
     }
 }
 
@@ -342,6 +347,17 @@ function handleAppHidden() {
 }
 
 //KaiAds
+function logKaiAdError(err) {
+    const errorMap = {
+        5: 'Ad request timed out',
+        6: 'No ad available',
+        7: 'Frequency capping in effect',
+        19: 'Cannot load SDK (network/old SDK)'
+    };
+    const detail = errorMap[err] || 'Unknown KaiAds error';
+    console.error('KaiAd error:', err, '-', detail);
+}
+
 function preloadKaiAd() {
     // Check if KaiAds SDK is available
     if (typeof getKaiAd === 'undefined') {
@@ -357,18 +373,26 @@ function preloadKaiAd() {
 
     try {
         getKaiAd({
-            publisher: '88241808-9221-4a75-9d1a-02982f57a0b3',
-            app: 'TapTiles 2',
-            slot: 'default',
-            test: 0,  // Set to 1 for testing, 0 for production
+            publisher: KAIADS_PUBLISHER_ID,
+            app: KAIADS_APP_NAME,
+            slot: KAIADS_SLOT,
+            test: KAIADS_TEST_MODE,
             timeout: 10000,  // 10 second timeout for slow devices
             onerror: err => {
                 adRequestInFlight = false;
-                console.error('KaiAd error:', err);
+                logKaiAdError(err);
             },
             onready: ad => {
                 adRequestInFlight = false;
                 preloadedAd = ad;
+                if (ad && typeof ad.on === 'function') {
+                    ad.on('display', () => {
+                        console.log('KaiAd displayed');
+                    });
+                    ad.on('click', () => {
+                        console.log('KaiAd clicked');
+                    });
+                }
                 if (ad && typeof ad.on === 'function') {
                     ad.on('close', () => {
                         preloadKaiAd();
@@ -403,17 +427,23 @@ function showKaiAd() {
 
     try {
         getKaiAd({
-            publisher: '88241808-9221-4a75-9d1a-02982f57a0b3',
-            app: 'TapTiles 2',
-            slot: 'default',
-            test: 0,  // Set to 1 for testing, 0 for production
+            publisher: KAIADS_PUBLISHER_ID,
+            app: KAIADS_APP_NAME,
+            slot: KAIADS_SLOT,
+            test: KAIADS_TEST_MODE,
             timeout: 10000,
-            onerror: err => console.error('KaiAd error:', err),
+            onerror: err => logKaiAdError(err),
             onready: ad => {
                 if (ad && typeof ad.call === 'function') {
                     if (typeof ad.on === 'function') {
                         ad.on('close', () => {
                             preloadKaiAd();
+                        });
+                        ad.on('display', () => {
+                            console.log('KaiAd displayed');
+                        });
+                        ad.on('click', () => {
+                            console.log('KaiAd clicked');
                         });
                     }
                     ad.call('display');
@@ -427,4 +457,12 @@ function showKaiAd() {
 
 document.addEventListener('DOMContentLoaded', () => {
     preloadKaiAd();
+
+    // Make ad presence obvious during review by attempting once from title screen.
+    setTimeout(() => {
+        if (!startupAdAttempted && titleScreen) {
+            startupAdAttempted = true;
+            showKaiAd();
+        }
+    }, 1500);
 });
